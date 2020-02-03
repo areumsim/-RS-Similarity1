@@ -10,10 +10,10 @@
 
 </br>
 
-** Predicted Rating ** </br>
+**Predicted Rating** </br>
 ![image](https://user-images.githubusercontent.com/31869418/73638062-04151b00-46ad-11ea-8e28-a6decd66d51c.png) </br>
 
----</br>
+---
 
 ![image](https://user-images.githubusercontent.com/31869418/73638064-05dede80-46ad-11ea-9e83-29f60897e78b.png) </br>
 
