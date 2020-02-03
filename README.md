@@ -8,11 +8,6 @@
 ( NHSM.similarity(a,b) ) </br>
 6. A Jaccard - AJac.similarity(a,b) </br>
 
+</br>
 
 ![image](https://user-images.githubusercontent.com/31869418/73637156-f363a580-46aa-11ea-85b2-2edf314bb877.png)
-
-
-| :-----------: | :-----------: | :-----------: |
-| **Cosine**     |           | Very long data entry |
-| **Constrained Pearson correlation coefficient**  | **Cell**      | *Cell*               |
-| **MSD(Mean Square Distance)** | Cell that spans across two columns  ||
