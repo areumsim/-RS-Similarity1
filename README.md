@@ -10,8 +10,8 @@
 
 </br>
 
-**Predicted Rating** </br>
-![image](https://user-images.githubusercontent.com/31869418/73638062-04151b00-46ad-11ea-8e28-a6decd66d51c.png) </br>
+    **Predicted Rating** </br>
+    ![image](https://user-images.githubusercontent.com/31869418/73638062-04151b00-46ad-11ea-8e28-a6decd66d51c.png) </br>
 
 ---
 
