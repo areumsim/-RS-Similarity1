@@ -29,3 +29,10 @@
 
 ---
 
+
+---
+*** main.r
+>> Cal.all.similarity <- function()
+> Cal.all.similarity <- function()
+
+
