@@ -47,20 +47,20 @@ $$
 ### 코드 </br>
 ***main.r***<br>
 
-''' Cal.all.similarity <- function()'''   <br>
+    Cal.all.similarity <- function()   <br>
 전체 사용자의 모든 메소드에 대한 유사도 추출 <br>
 각 메소드별로 matrix(사용자x사용자)형태로 전체 유사도가 저장 <br>
 return ( siMat <<- list( siMat1, siMat2, siMat3, siMat4 , siMat5, siMat6 ) ) List 에 저장 <br><br>
       
-''' Get.similarity <- function( userId )'''  <br>
+    Get.similarity <- function( userId )  <br>
 UserID 기준으로 전체 사용자의 메소드별 유사도 추출 ( 행 : 사용자, 열 : 메소드 ) <br>
 *TODO*  6개의 유사도 병합 방법 <br><br>
 
-''' Predicted.rating <- function(userId, movieId)'''  <br>
+    Predicted.rating <- function(userId, movieId)  <br>
 예측 평가치 추출 <br>
 ( 원래 mathod는 평가치가 존재하면 메세지와 함께 평가치를 반환하지만, 성능 평가를 위하여 해당부분 제거  ) <br><br>
 
-''' Predict.all.ratings <- function()'''  <br>
+    Predict.all.ratings <- function()  <br>
 성능 평가를 위하여, 평가치가 있는 항목만 평가치 예측<br>
 실제 평가치와 예측 평가치를 비교하여 유사도 성능 비교<br><br>
 
