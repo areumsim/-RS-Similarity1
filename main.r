@@ -1,131 +1,183 @@
 library(readr)
-library(tidyr)  #spread
-library(dplyr)  #%>%
+library(tidyr)
+library(dplyr)
 library(tibble)
 library(plyr)
-library(Metrics) # mae
 
 library(textshape)
 
+N <- 5
+lamda <- 0.7
+delta <- 0.7
 
 ## Read Data 
-ratings <-read.csv("C:/Users/haji/Desktop/ratingDB/the-movies-dataset/ratings_small.csv", header = T)
+ratings <- read_csv("C:/Users/haji/Desktop/ratingDB/SUIR/ratings_small.csv")
 
-trueRatingMat <- select(ratings, userId, movieId, rating) %>%
-  spread(movieId, rating) %>%
-  group_by(userId) %>%
+realRatingMat <- select(ratings, userId, movieId, rating) %>% 
+  spread(movieId, rating) %>% 
+  group_by(userId) %>% 
   column_to_rownames(1)
 
-# trueRatingMat <- trueRatingMat[1:80, 1:80]
+tmpMat <- data.matrix(realRatingMat)
 
-# Origin : 671 x 9066
-userLen <- nrow(trueRatingMat)
-movieLen <- ncol(trueRatingMat)
+userLen <- nrow(tmpMat)
+movieLen <- ncol(tmpMat)
 
-simCnt <- 6
-siMat <- list()
+su_list <- c()   #사용자 유사도 list
+si_list <- c()   #아이템 유사도 list
+sui_mat <- matrix(nrow=userLen,ncol=movieLen)   #사용자 아이템 유사도 matrix
 
-
-Cal.all.similarity <- function(){
-  siMat1 <- c() ; siMat2 <- c() ; siMat3 <- c()
-  siMat4 <- c() ; siMat5 <- c() ; siMat6 <- c()
-  
-  for( i in 1:userLen){
-    tmp <<- apply(trueRatingMat, 1,
-                  function(x) {
-                    Cal.similarity(trueRatingMat[i,], x)
-                  }) 
-    tmp <- round(tmp, digits = 4)
-    
-    siMat1 <- cbind(siMat1, tmp[1,])
-    siMat2 <- cbind(siMat2, tmp[2,])
-    siMat3 <- cbind(siMat3, tmp[3,])
-    siMat4 <- cbind(siMat4, tmp[4,])
-    siMat5 <- cbind(siMat5, tmp[5,])
-    siMat6 <- cbind(siMat6, tmp[6,]) 
+### ###
+cos_similarity <- function(a, b) {
+  cnt1 <- 0 #동일 개채를 평가한 것의 갯수
+  tmp1 <-0
+  tmp2 <-0
+  tmp3 <-0
+  for(i in 1:length(a)){
+    if( !is.na(a[i]) && !is.na(b[i]) ){
+      tmp1 <- tmp1 + a[i]*b[i]
+      tmp2 <- tmp2 + a[i]*a[i]
+      tmp3 <- tmp3 + b[i]*b[i]
+      cnt1 <- cnt1+1
+    }
   }
   
-  siMat <<- list( siMat1, siMat2, siMat3, siMat4 , siMat5, siMat6 )
+  if( cnt1 > 0 ){
+    return (  list("similarity" = tmp1/(sqrt(tmp2*tmp3)), "cnt" = cnt1 )   )
+  }else{
+    return ( list("similarity" = 0 , "cnt" = 0 ) )
+  }
+}
+
+#   Error in su_list[[i]] <- cos_similarity(tmpMat[userID, ], tmpMat[i, ])$similarity : 
+#   replacement has length zero
+cal_similarity_user <- function(userId){
+  # cnt <- c()
+  for( i in 1:userLen){
+    if( i != userId ){
+      su_list[[i]] = unname(cos_similarity(tmpMat[userId,], tmpMat[i,])$similarity)
+      # cnt <- c(cnt, cos_similarity(tmpMat[userId,], tmpMat[i,])$cnt)
+    }else{
+      su_list[[i]] = 99
+    }
+  }
+  # View(su_list)
+  tmpMat <- cbind(as.numeric(unlist(su_list)) , tmpMat)
+  tmpMat <- tmpMat[order(tmpMat[,1], decreasing = TRUE),]
   
-  # TODO : remove code - temporally saved file 
-  write.csv( siMat1, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
-  write.csv( siMat2, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
-  write.csv( siMat3, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
-  write.csv( siMat4, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
-  write.csv( siMat5, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
-  write.csv( siMat6, file="C:/Users/haji/Desktop/5-Jaccrd_Implement" )
+  sui_mat[,1] <- tmpMat[,1]
+  
+  tmpMat <- tmpMat[,-1]
+  # View(tmpMat)
+  # View(sui_mat)
 }
 
 
-# TODO : remove code - temporally saved file 
-tmpReadSim() <- function(){
-  siMat1 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat1.csv", header = T)
-  siMat2 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat2.csv", header = T)
-  siMat3 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat3.csv", header = T)
-  siMat4 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat4.csv", header = T)
-  siMat5 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat5.csv", header = T)
-  siMat6 <-read.csv("C:/Users/haji/Desktop/ratingDB/the-Jaccrd_Implement/siMat6.csv", header = T)
-  siMat <<- list( siMat1, siMat2, siMat3, siMat4 , siMat5, siMat6 )
+cal_similarity_item <- function(movieId){
+  # cnt <- c()
+  for( i in 1:movieLen){
+    if( i != movieId ){
+      si_list[[i]] = cos_similarity(tmpMat[,movieId], tmpMat[,i])$similarity
+      #cnt <- c(cnt, cos_similarity(tmpMat[userId,], tmpMat[i,])$cnt)
+    }else{
+      si_list[[i]] <- 99
+    }
+  }
+  tmpMat <- rbind(as.numeric(unlist(si_list)) , tmpMat)
+  tmpMat <- tmpMat[,order(tmpMat[1,], decreasing = TRUE)]
+  sui_mat[1,] <- tmpMat[1,]
+  
+  tmpMat <- tmpMat[-1,]
+  # View(tmpMat)
+  # View(sui_mat)
 }
 
 
-Get.similarity <- function( userId ){
-  UserSiMat <- matrix(0, nrow=userLen, ncol=simCnt)
-  colnames(UserSiMat) <- Get.similarity.names()
+cal_similarity_ui <- function(){
+  # rank(Su) 와 rank(Si) 를 알아내야함 ...
+  rankNSu <- 50
+  rankNSi <- 50
   
-  UserSiMat[,1] <- siMat[[1]][userId, ]
-  UserSiMat[,2] <- siMat[[2]][userId, ]
-  UserSiMat[,3] <- siMat[[3]][userId, ]
-  UserSiMat[,4] <- siMat[[4]][userId, ]
-  UserSiMat[,5] <- siMat[[5]][userId, ]
-  UserSiMat[,6] <- siMat[[6]][userId, ]
-  UserSiMat[userId,] <- 0
+  # Su 와 Si 가 아니고 , SuN*SiN 에 해당하는 부분만 계산
+  for( i in 2:rankNSu ){
+    for( j in 2:rankNSi ){
+      sui_mat[i,j] <- ( 1 / sqrt((1/sui_mat[i,1])^2 + (1/sui_mat[1,j])^2 ) )
+    }
+  }
+  # View(sui_mat)
+}
+
+
+# userId의 movieId에 대한 rating 예측
+predicted_rating <- function(){
+  N <-50
+  result <- 0
   
-  siList <- rowMeans(UserSiMat)
-   
-  return ( siList )
+  sumSUR <- sum(sui_mat[2:N,1], na.rm=TRUE)
+  sumSIR <- sum(sui_mat[1,2:N], na.rm=TRUE) 
+  sumSUIR <- 0
+  for( i in 2:N ){
+    for( j in 2:N ){
+      if(!is.na(tmpMat[i,j])){
+        sumSUIR <- sumSUIR + sui_mat[i,j]
+      }
+    }
+  }
+  cat(sumSUR , sumSIR, sumSUIR, "\n")
+  
+  for( i in 1:N ){
+    for( j in 1:N ){
+      pkm = tmpMat[i,j] -
+        (mean(tmpMat[i,], na.rm=TRUE) - mean(tmpMat[1,], na.rm=TRUE)) -
+        (mean(tmpMat[,j], na.rm=TRUE) - mean(tmpMat[,1], na.rm=TRUE))
+      
+      if( !is.na(pkm) ){
+        if( i!=1 && j!=1 ){  #SUIR
+          result <- result + pkm * ( sui_mat[i,j] / sumSUIR ) * delta 
+        }else if( i==1 && j!=1 ){  #SUR
+          result <- result + pkm * ( sui_mat[i,j] / sumSUIR ) * (lamda) * (1-delta) 
+        }else if( i!=1 && j==1){ #SIR
+          result <- result + pkm * ( sui_mat[i,j] / sumSUIR ) * (1-lamda) * (1-delta) 
+        }
+      }
+    }
+  }
+  cat("result : ", result,"\n")
+  return ( result )
 }
 
 
 #########################################################
-Predicted.rating <- function(userId, movieId){
-  siList <-  Get.similarity(userId)
-  
-  if( sum(trueRatingMat[,movieId], na.rm=T)==0 ||
-      sum(trueRatingMat[userId,], na.rm=T)==0 || 
-      sum(abs(siList), na.rm=T)==0 ){
-    return ( 0 )
-  }
-  
-  # siR =  sim(U,V) * ( rating of V - avg of V ) 
-  siR <- siList * (trueRatingMat[, movieId] - rowMeans(trueRatingMat, na.rm=T))
-  
-  result <- ( sum(trueRatingMat[userId,], na.rm=T) / sum(!is.na(trueRatingMat[userId,])) ) +
-    ( sum(siR, na.rm=T) / sum(abs(siList[!is.na(siR)]), na.rm=T) )
-  return( result )
-}
+#########################################################
 
-
-trueValue <- c()
-predictValue <- c()
-
-Predict.all.ratings <- function(){
-  cnt <- 0
-  # trueValue <- c()
-  # predictValue <- c()
-  
-  for (i in 1:userLen) {
-    for (j in 1:movieLen) {
-      if( !is.na(trueRatingMat[i,j]) ){
-        cnt <- cnt + 1
-        
-        # get real rating
-        trueValue[cnt] <<- trueRatingMat[i,j]
-        
-        # get predict rating
-        predictValue[cnt] <<- Predicted.rating(i, j)
-      }
+main <- function(userId, movieId){
+  valusIsNA <- function(userId, movieId){
+    if( !is.na(tmpMat[userId,movieId]) ){
+      return (tmpMat[userId,movieId])
+    }else{
+      return ( -1 )
     }
   }
-  cat("MAE : ", mae(trueValue, predictValue),"\n")
+  
+  # 값이 존재하면 출력하고, 아니면 예측
+  if( valusIsNA(userId, movieId) != -1 ){
+    cat("r(", userId , ", " , movieId, ") already gave grades. ")
+    return (valusIsNA(userId, movieId))
+  }
+  cal_similarity_user(userId)
+  cal_similarity_item(movieId)
+  cal_similarity_ui()
+  expectedRating <- predicted_rating()
 }
+
+
+
+predictMat <- matrix(nrow=userLen, ncol=movieLen)
+predictedAll <- function(){
+  for( i in 1:userLen ){
+    for( j in 1:movieLen ){
+      predictMat[i, j] <<- main(i, j)
+    }
+  }
+}
+
