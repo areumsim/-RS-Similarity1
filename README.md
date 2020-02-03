@@ -10,10 +10,10 @@
 
 </br>
 
-** Predicted Rating **
+** Predicted Rating ** </br>
 ![image](https://user-images.githubusercontent.com/31869418/73638062-04151b00-46ad-11ea-8e28-a6decd66d51c.png) </br>
 
----
+===
 ![image](https://user-images.githubusercontent.com/31869418/73638064-05dede80-46ad-11ea-9e83-29f60897e78b.png) </br>
 
 ![image](https://user-images.githubusercontent.com/31869418/73638066-07a8a200-46ad-11ea-83b1-cab55c24ed8d.png) </br>
@@ -25,5 +25,9 @@
 ![image](https://user-images.githubusercontent.com/31869418/73638080-0d05ec80-46ad-11ea-9c37-e41aa662afde.png) </br>
 
 ![image](https://user-images.githubusercontent.com/31869418/73638086-0ecfb000-46ad-11ea-8c38-bad20b9ff261.png) </br>
+===
+
+</br>
+
 ---
 
