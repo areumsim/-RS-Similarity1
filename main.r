@@ -106,13 +106,10 @@ Predicted.rating <- function(userId, movieId){
 }
 
 
-trueValue <- c()
-predictValue <- c()
-
 Predict.all.ratings <- function(){
   cnt <- 0
-  # trueValue <- c()
-  # predictValue <- c()
+  trueValue <- c()
+  predictValue <- c()
   
   for (i in 1:userLen) {
     for (j in 1:movieLen) {
