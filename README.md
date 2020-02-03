@@ -13,7 +13,9 @@
 **Predicted Rating** </br>
 ![image](https://user-images.githubusercontent.com/31869418/73638062-04151b00-46ad-11ea-8e28-a6decd66d51c.png) </br>
 
+</br>
 ---
+</br>
 
 ![image](https://user-images.githubusercontent.com/31869418/73638064-05dede80-46ad-11ea-9e83-29f60897e78b.png) </br>
 
@@ -27,12 +29,38 @@
 
 ![image](https://user-images.githubusercontent.com/31869418/73638086-0ecfb000-46ad-11ea-8c38-bad20b9ff261.png) </br>
 
+
+</br>
 ---
+</br>
+
+### 성능 평가 기준 </br>
+**MAE(Mean Absolute Error)** : 평균 절대 오차 <br>
+$$
+MAE=1|R^|∑r^(u,i)∈R^|r(u,i)−r^(u,i)|
+$$
+
+</br>
+---
+</br>
+
+### 코드 </br>
+***main.r***<br>
+
+> Cal.all.similarity <- function()  <br>
+  전체 사용자의 모든 메소드에 대한 유사도 추출 <br>
+  각 메소드별로 matrix(사용자x사용자)형태로 전체 유사도가 저장 <br>
+  return ( siMat <<- list( siMat1, siMat2, siMat3, siMat4 , siMat5, siMat6 ) ) List 에 저장 <br><br>
+    
+    
+> Get.similarity <- function( userId ) <br>
+   <br><br>
+
+> Predicted.rating <- function(userId, movieId) <br>
+
+> Predict.all.ratings <- function() <br>
 
 
----
-*** main.r
->> Cal.all.similarity <- function()
-> Cal.all.similarity <- function()
+
 
 
