@@ -8,6 +8,19 @@
 ( NHSM.similarity(a,b) ) </br>
 6. A Jaccard - AJac.similarity(a,b) </br>
 
+
+---
+
+#### Data : User 671 x  Movie 906
+siMat ( 671 x 671 ) <br>
+- siMat1.csv : Cos <br>
+- siMat2.csv : Pearson <br>
+- siMat3.csv : CPC (Constrained Pearson Correlation) <br>
+- siMat4.csv : MSD (Mean Squared Distance) <br>
+- siMat5.csv : Jaccard <br>
+- siMat6.csv : aJaccard <br>
+
+
 </br>
 
 **Predicted Rating** </br>
