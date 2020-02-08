@@ -8,7 +8,7 @@
 ( NHSM.similarity(a,b) ) </br>
 6. A Jaccard - AJac.similarity(a,b) </br>
 
-
+</br>
     #### Data : User 671 x  Movie 906
     siMat ( 671 x 671 ) <br>
     - siMat1.csv : Cos <br>
